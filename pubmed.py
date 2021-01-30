@@ -107,4 +107,4 @@ if __name__ == '__main__':
     affiliations = info['Affiliations']
     bibliography_style = info["Style"]
 
-    main(author_name, api_key, bibliography_style, ['Park J'])
+    main(author_name, affiliations, api_key, bibliography_style, ['Park J'])
