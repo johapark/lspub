@@ -1,0 +1,3 @@
+[submodule "external/eutils"]
+	path = external/eutils
+	url = git@github.com:johapark/eutils.git
