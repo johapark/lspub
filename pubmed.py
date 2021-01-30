@@ -32,6 +32,7 @@ class PubMedArticle(object):
         volume = self.volume
         issue = self.issue
         pages = self.pages
+        abstract = self.abstract
 
         if style == 'default':
 
@@ -52,29 +53,34 @@ class PubMedArticle(object):
             output = ' '.join(elements)
 
         elif style == 'bibtex':
-            """
-            @article{Yi2018,
-                abstract = {Multiple deadenylases are known in vertebrates, the PAN2-PAN3 (PAN2/3) and CCR4-NOT (CNOT) complexes, and PARN, yet their differential functions remain ambiguous. Moreover, the role of poly(A) binding protein (PABP) is obscure, limiting our understanding of the deadenylation mechanism. Here, we show that CNOT serves as a predominant nonspecific deadenylase for cytoplasmic poly(A) + RNAs, and PABP promotes deadenylation while preventing premature uridylation and decay. PAN2/3 selectively trims long tails (>∼150 nt) with minimal effect on transcriptome, whereas PARN does not affect mRNA deadenylation. CAF1 and CCR4, catalytic subunits of CNOT, display distinct activities: CAF1 trims naked poly(A) segments and is blocked by PABPC, whereas CCR4 is activated by PABPC to shorten PABPC-protected sequences. Concerted actions of CAF1 and CCR4 delineate the ∼27 nt periodic PABPC footprints along shortening tail. Our study unveils distinct functions of deadenylases and PABPC, re-drawing the view on mRNA deadenylation and regulation. Yi et al. show that the CCR4-NOT complex is a generic deadenylase and its two catalytic subunits have distinct activities regarding PABPC: CAF1 trims PABPC-free A tails while CCR4 removes PABPC-bound A tails. PABPC coordinates mRNA deadenylation and decay in a timely order by promoting deadenylation and blocking precocious decay.},
-                author = {Yi, Hyerim and Park, Joha and Ha, Minju and Lim, Jaechul and Chang, Hyeshik and Kim, V. Narry},
-                doi = {10.1016/j.molcel.2018.05.009},
-                file = {:Users/joha/Clouds/Google Drive/Mendeley/2018_Molecular Cell_Yi et al._PABP Cooperates with the CCR4-NOT Complex to Promote mRNA Deadenylation and Block Precocious Decay.pdf:pdf},
-                issn = {10972765},
-                journal = {Molecular Cell},
-                keywords = {CAF1,CCR4,CCR4-NOT,PABPC,PAN2-PAN3,PARN,RNA decay,deadenylation,poly(A) tail,uridylation},
-                month = {jun},
-                number = {6},
-                pages = {1081--1088.e5},
-                title = {{PABP Cooperates with the CCR4-NOT Complex to Promote mRNA Deadenylation and Block Precocious Decay}},
-                url = {https://linkinghub.elsevier.com/retrieve/pii/S1097276518303599},
-                volume = {70},
-                year = {2018}
-            }
-            """
 
-            output = authors
+            def _bibtex_format_authors(authors):
+                names = []
+                for author in authors:
+                    family_name, given_name = author.split()
+                    names.append(f"{family_name}, {given_name}")
+                return ' and '.join(names)
 
+            formatted = "@article{"
+            label = authors[0].split()[0] + year
+            author = f"author = {{{_bibtex_format_authors(authors)}}}"
+            title = f"title = {{{title}}}"
+            year = f"year = {{{year}}}"
+            journal = f"journal = {{{journal}}}"
+            volume = f"volume = {{{volume}}}"
+            issue = f"issue = {{{issue}}}"
+            pages = f"pages = {{{pages}}}"
+            abstract = f"abstract = {{{abstract}}}"
+
+            elements = [label, author, title, year, journal, volume, issue, pages, abstract] # label should be placed at first
+
+            formatted += ',\n  '.join(elements)
+            formatted += "\n}\n"
+
+            output = formatted
 
         return output
+
 
 def search_pubmed_by_author(client, author_name, affliations=None):
     """Carry out Esearch with 'eutils.Client' instance.
@@ -93,7 +99,7 @@ def main(author_name, affiliations=None, api_key=None, style='default', highligh
     pubs = [PubMedArticle(pma) for pma in pmasets]
 
     for pub in pubs:
-        print( pub.bibliography(style=style, highlight_names=highlight_names, highlight_journal=highlight_journal), '<br>' )
+        print( pub.bibliography(style=style, highlight_names=highlight_names, highlight_journal=highlight_journal))
 
 
 
