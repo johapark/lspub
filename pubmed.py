@@ -61,7 +61,7 @@ def search_pubmed_by_author(client, author_name, affliations=None):
     return esearch
 
 def main(author_name, api_key=None, style='default', highlight_names=None, highlight_journal=True):
-    """Search PubMed via eutils and reformat the retreived results"""
+    """Search PubMed via eutils and format the retreived results"""
     ec = Client(api_key=api_key)
     esr = search_pubmed_by_author(ec, author_name)
     pmasets = [pma for pma in iter(ec.efetch(db='pubmed', id=esr.ids))]
