@@ -24,6 +24,19 @@ class PubMedArticle(object):
     def enclose(s, char):
         return f'{char}{s}{char}'
 
+    @staticmethod
+    def initialize_name(name, join='.'):
+        initials = list()
+        tokens = name.split()
+        for token in tokens:
+            for i, t in enumerate(token.split('-')):
+                if i == 0:
+                    initials.append(t[0].upper())
+                else:
+                    initials.append('-'+t[0].upper())
+                
+        return join.join(initials) + join
+
     def _stylizer(self, style, highlight_names=False, highlight_journal=False):
         authors = self.authors
         year = self.year
@@ -57,12 +70,13 @@ class PubMedArticle(object):
             def _bibtex_format_authors(authors):
                 names = []
                 for author in authors:
-                    family_name, given_name = author.split()
+                    family_name, given_name = map(str.strip, author.split(','))
+                    given_name = self.initialize_name(given_name)
                     names.append(f"{family_name}, {given_name}")
                 return ' and '.join(names)
 
             formatted = "@article{"
-            label = authors[0].split()[0] + year
+            label = authors[0].split(',')[0] + year
             author = f"author = {{{_bibtex_format_authors(authors)}}}"
             title = f"title = {{{title}}}"
             year = f"year = {{{year}}}"
