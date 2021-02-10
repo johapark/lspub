@@ -25,17 +25,18 @@ class PubMedArticle(object):
         return f'{char}{s}{char}'
 
     @staticmethod
-    def initialize_name(name, join='.'):
+    def initialize_name(name, join='. '):
         initials = list()
         tokens = name.split()
         for token in tokens:
             for i, t in enumerate(token.split('-')):
                 if i == 0:
-                    initials.append(t[0].upper())
+                    initial = t[0].upper()
                 else:
-                    initials.append('-'+t[0].upper())
+                    initial += join.rstrip() + '-' + t[0].upper()
+            initials.append(initial)
                 
-        return join.join(initials) + join
+        return join.join(initials) + join.rstrip()
 
     def _stylizer(self, style, highlight_names=False, highlight_journal=False):
         authors = self.authors
